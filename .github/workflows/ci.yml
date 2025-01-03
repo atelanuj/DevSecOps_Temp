@@ -44,7 +44,12 @@ jobs:
                 args: >
                     --failOnCVSS 7
                     --enableRetired
-                
+
+            - uses: actions/upload-artifact@v4
+              with:
+                name: OWASP-dependecy-report
+                path: .
+        
             - name: Run Trivy vulnerability scanner
               uses: aquasecurity/trivy-action@0.28.0
               with:
