@@ -45,7 +45,9 @@ jobs:
                     --failOnCVSS 7
                     --enableRetired
 
-            - uses: actions/upload-artifact@v4
+            - name: upload artifacts
+              uses: actions/upload-artifact@v4
+              if: ${{ always() }}
               with:
                 name: OWASP-dependecy-report
                 path: .
