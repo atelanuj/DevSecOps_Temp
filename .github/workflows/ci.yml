@@ -39,9 +39,9 @@ jobs:
                 JAVA_HOME: /opt/jdk
               with:
                 project: 'netflix'
-                path: './reports/'
+                path: '.'
                 format: 'HTML'
-                out: '.' # this is the default, no need to specify unless you wish to override it
+                out: 'reports' # this is the default, no need to specify unless you wish to override it
                 args: >
                     --failOnCVSS 7
                     --enableRetired
