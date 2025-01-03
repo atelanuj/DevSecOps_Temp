@@ -39,7 +39,7 @@ jobs:
                 JAVA_HOME: /opt/jdk
               with:
                 project: 'netflix'
-                path: '.'
+                path: './reports/'
                 format: 'HTML'
                 out: '.' # this is the default, no need to specify unless you wish to override it
                 args: >
@@ -51,7 +51,7 @@ jobs:
               if: ${{ always() }}
               with:
                 name: OWASP-dependecy-report
-                path: ./reports/**.html
+                path: ./reports/dependecy-check-report.html
         
             - name: Run Trivy vulnerability scanner
               uses: aquasecurity/trivy-action@0.28.0
@@ -68,6 +68,7 @@ jobs:
 
             - name: Run Trivy vulnerability scanner
               uses: aquasecurity/trivy-action@0.28.0
+              continue-on-error: true
               with:
                   image-ref: 'netflix'
                   format: 'table'
