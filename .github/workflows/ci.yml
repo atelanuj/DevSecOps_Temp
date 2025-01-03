@@ -51,7 +51,7 @@ jobs:
               if: ${{ always() }}
               with:
                 name: OWASP-dependecy-report
-                path: OWASP-dependecy-report.html
+                path: /OWASP-dependecy-report.html
         
             - name: Run Trivy vulnerability scanner
               uses: aquasecurity/trivy-action@0.28.0
