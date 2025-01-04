@@ -1,0 +1,21 @@
+apiversion: apps/v1
+kind: Deployment
+metadata:
+  name: netflix
+  labels:
+    app: netflix
+spec:
+replicas: 2
+selector:
+  matchLabels:
+    app: netflix
+  template:
+    metadata:
+      labels:
+        app: netflix
+    spec:
+    containers:
+    - name: netflix
+      image: anujatel/netflix:${{github.run_number}}
+      ports:
+      - containerPort: 3000

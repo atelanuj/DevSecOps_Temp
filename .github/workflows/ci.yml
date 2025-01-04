@@ -24,27 +24,32 @@ jobs:
                 java-package: 'jdk'
                 check-latest: true
 
-            # - name: SonarQube Scan
-            #   uses: SonarSource/sonarqube-scan-action@v4.2.1
-            #   env:
-            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+            - name: SonarQube Scan
+              uses: SonarSource/sonarqube-scan-action@v4.2.1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-            # - name: SonarQube Server Quality Gate check
-            #   id: sonarqube-quality-gate-check
-            #   uses: sonarsource/sonarqube-quality-gate-action@master
-            #   with:
-            #     pollingTimeoutSec: 600
-            #   env:
-            #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
+            - name: SonarQube Server Quality Gate check
+              id: sonarqube-quality-gate-check
+              uses: sonarsource/sonarqube-quality-gate-action@master
+              with:
+                pollingTimeoutSec: 600
+              timeout-minutes: 8
+              env:
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
 
+            - name: Install Datree
+              run: curl https://get.datree.io | /bin/bash
 
-            # - name: "Example show SonarQube Server Quality Gate Status value"
-            #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+            - name: Run Datree's policy check
+              run: datree test kubernetes/**.yml
+
+            - name: "Example show SonarQube Server Quality Gate Status value"
+              run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
         
-
             - name: OWASP Dependency check
               uses: dependency-check/Dependency-Check_Action@main
               continue-on-error: true
@@ -60,11 +65,11 @@ jobs:
                     --failOnCVSS 7
                     --enableRetired
 
-            - name: List dir
-              run: |
-                ls -lrt
-                echo "reports"
-                ls -lrt reports
+            # - name: List dir
+            #   run: |
+            #     ls -lrt
+            #     echo "reports"
+            #     ls -lrt reports
 
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
@@ -102,3 +107,9 @@ jobs:
                 docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASS }}
                 docker tag netflix anujatel/netflix:${{github.run_number}}
                 docker push anujatel/netflix:${{github.run_number}}
+
+            - name: Update Manifests
+              run: |
+                sed -i 's/anujatel\/netflix:.*/anujatel\/netflix:${{github.run_number}}/' Kubernetes/deployment.yml
+              
+              
