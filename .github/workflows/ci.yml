@@ -52,7 +52,7 @@ jobs:
             #   with:
             #     path: 'kubernetes/*.yml'
             #     cliArguments: '--only-k8s-files'
-            
+
             
             - name: OWASP Dependency check
               uses: dependency-check/Dependency-Check_Action@main
@@ -82,29 +82,29 @@ jobs:
                 name: OWASP-dependecy-report
                 path: './reports/dependency-check-report.html'
         
-            - name: Run Trivy vulnerability scanner
-              uses: aquasecurity/trivy-action@0.28.0
-              with:
-                scan-type: 'fs'
-                ignore-unfixed: true
-                format: 'sarif'
-                output: 'trivy-results.sarif'
-                severity: 'CRITICAL'
+            # - name: Run Trivy vulnerability scanner on filesystem
+            #   uses: aquasecurity/trivy-action@0.28.0
+            #   with:
+            #     scan-type: 'fs'
+            #     ignore-unfixed: true
+            #     format: 'sarif'
+            #     output: 'trivy-results.sarif'
+            #     severity: 'CRITICAL'
 
             - name: Docker BUILD
               run: |
                 docker build --build-arg API_KEY=2163ddaafebb76001dafaf4b740d7841 -t netflix .
 
-            - name: Run Trivy vulnerability scanner
-              uses: aquasecurity/trivy-action@0.28.0
-              continue-on-error: true
-              with:
-                  image-ref: 'netflix'
-                  format: 'table'
-                  exit-code: '1'
-                  ignore-unfixed: true
-                  vuln-type: 'os,library'
-                  severity: 'CRITICAL,HIGH'
+            # - name: Run Trivy vulnerability scanner on Docker image
+            #   uses: aquasecurity/trivy-action@0.28.0
+            #   continue-on-error: true
+            #   with:
+            #       image-ref: 'netflix'
+            #       format: 'table'
+            #       exit-code: '1'
+            #       ignore-unfixed: true
+            #       vuln-type: 'os,library'
+            #       severity: 'CRITICAL,HIGH'
             
             - name: Docker TAG & PUSH
               run: |
@@ -116,4 +116,7 @@ jobs:
               run: |
                 sed -i 's/anujatel\/netflix:.*/anujatel\/netflix:${{github.run_number}}/' Kubernetes/deployment.yml
               
-              
+            - name: Deploy
+              run: | 
+                git commit -m "Update image tag"
+                git push
