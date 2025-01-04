@@ -11,7 +11,7 @@ on:
 
 jobs:
     BUILD:
-        name: BUILD and TEST
+        name: NetFlix clone CI
         runs-on: ubuntu-latest
         steps:
             - name: Code Checkout
