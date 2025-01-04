@@ -16,6 +16,6 @@ selector:
     spec:
     containers:
     - name: netflix
-      image: anujatel/netflix:${{github.run_number}}
+      image: anujatel/netflix:25
       ports:
       - containerPort: 3000
