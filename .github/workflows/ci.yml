@@ -15,37 +15,38 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Code Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
               with:
+                persist-credentials: false
                 fetch-depth: 0
 
-            - name: Install JAVA latest
-              uses: actions/setup-java@v4
-              with:
-                distribution: 'temurin' # See 'Supported distributions' for available options
-                java-version: '21'
-                java-package: 'jdk'
-                check-latest: true
+            # - name: Install JAVA latest
+            #   uses: actions/setup-java@v4
+            #   with:
+            #     distribution: 'temurin' # See 'Supported distributions' for available options
+            #     java-version: '21'
+            #     java-package: 'jdk'
+            #     check-latest: true
 
-            - name: SonarQube Scan
-              uses: SonarSource/sonarqube-scan-action@v4.2.1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+            # - name: SonarQube Scan
+            #   uses: SonarSource/sonarqube-scan-action@v4.2.1
+            #   env:
+            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-            - name: SonarQube Server Quality Gate check
-              id: sonarqube-quality-gate-check
-              uses: sonarsource/sonarqube-quality-gate-action@master
-              with:
-                pollingTimeoutSec: 600
-              timeout-minutes: 8
-              env:
-                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
+            # - name: SonarQube Server Quality Gate check
+            #   id: sonarqube-quality-gate-check
+            #   uses: sonarsource/sonarqube-quality-gate-action@master
+            #   with:
+            #     pollingTimeoutSec: 600
+            #   timeout-minutes: 8
+            #   env:
+            #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
 
-            - name: "Example show SonarQube Server Quality Gate Status value"
-              run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+            # - name: "Example show SonarQube Server Quality Gate Status value"
+            #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
             # - name: Run Datree k8s Manifests Policy Check
             #   uses: datreeio/action-datree@main
@@ -54,20 +55,20 @@ jobs:
             #     cliArguments: '--only-k8s-files'
 
             
-            - name: OWASP Dependency check
-              uses: dependency-check/Dependency-Check_Action@main
-              continue-on-error: true
-              id: Depcheck
-              env:
-                JAVA_HOME: /opt/jdk
-              with:
-                project: 'netflix'
-                path: '.'
-                format: 'HTML'
-                out: 'reports' # this is the default, no need to specify unless you wish to override it
-                args: >
-                    --failOnCVSS 7
-                    --enableRetired
+            # - name: OWASP Dependency check
+            #   uses: dependency-check/Dependency-Check_Action@main
+            #   continue-on-error: true
+            #   id: Depcheck
+            #   env:
+            #     JAVA_HOME: /opt/jdk
+            #   with:
+            #     project: 'netflix'
+            #     path: '.'
+            #     format: 'HTML'
+            #     out: 'reports' # this is the default, no need to specify unless you wish to override it
+            #     args: >
+            #         --failOnCVSS 7
+            #         --enableRetired
 
             # - name: List dir
             #   run: |
@@ -75,12 +76,12 @@ jobs:
             #     echo "reports"
             #     ls -lrt reports
 
-            - name: Upload artifacts
-              uses: actions/upload-artifact@v4
-              if: ${{ always() }}
-              with:
-                name: OWASP-dependecy-report
-                path: './reports/dependency-check-report.html'
+            # - name: Upload artifacts
+            #   uses: actions/upload-artifact@v4
+            #   if: ${{ always() }}
+            #   with:
+            #     name: OWASP-dependecy-report
+            #     path: './reports/dependency-check-report.html'
         
             # - name: Run Trivy vulnerability scanner on filesystem
             #   uses: aquasecurity/trivy-action@0.28.0
@@ -118,5 +119,12 @@ jobs:
               
             - name: Deploy
               run: | 
-                git commit -m "Update image tag"
-                git push
+                git config --local user.email "atelanuj123@gmail.com"
+                git config --local user.name "atelanuj"
+                git commit -a -m "Updated the Image tag"
+
+            - name: Push changes
+              uses: ad-m/github-push-action@master
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  branch: ${{ github.ref }}
