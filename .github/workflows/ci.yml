@@ -53,6 +53,7 @@ jobs:
             #     path: 'kubernetes/*.yml'
             #     cliArguments: '--only-k8s-files'
             
+            
             - name: OWASP Dependency check
               uses: dependency-check/Dependency-Check_Action@main
               continue-on-error: true
