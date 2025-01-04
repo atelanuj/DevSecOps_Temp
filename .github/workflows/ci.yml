@@ -112,16 +112,13 @@ jobs:
                 docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASS }}
                 docker tag netflix anujatel/netflix:${{github.run_number}}
                 docker push anujatel/netflix:${{github.run_number}}
-
-            - name: Update Manifests
-              run: |
-                sed -i 's/anujatel\/netflix:.*/anujatel\/netflix:${{github.run_number}}/' Kubernetes/deployment.yml
               
             - name: Deploy
               run: | 
+                sed -i 's/anujatel\/netflix:.*/anujatel\/netflix:${{github.run_number}}/' Kubernetes/deployment.yml
                 git config --local user.email "github-actions[bot]@users.noreply.github.com"
                 git config --local user.name "github-actions[bot]"
-                git commit -a -m "Updated the Image tag"
+                git commit -a -m "Updated the Image tag to ${{github.run_number}}"
 
             - name: Push changes
               uses: ad-m/github-push-action@master
