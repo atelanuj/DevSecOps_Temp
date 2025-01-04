@@ -6,6 +6,9 @@ on:
       branches:
         - main
 
+# env:
+#   DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
+
 jobs:
     BUILD:
         name: BUILD and TEST
@@ -41,15 +44,15 @@ jobs:
             #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
 
-            - name: Install Datree
-              run: curl https://get.datree.io | /bin/bash
+            # - name: "Example show SonarQube Server Quality Gate Status value"
+            #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
-            - name: Run Datree's policy check
-              run: datree test kubernetes/**.yml
-
-            - name: "Example show SonarQube Server Quality Gate Status value"
-              run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
-        
+            - name: Run Datree k8s Manifests Policy Check
+              uses: datreeio/action-datree@main
+              with:
+                path: 'kubernetes/*.yml'
+                cliArguments: '--only-k8s-files'
+            
             - name: OWASP Dependency check
               uses: dependency-check/Dependency-Check_Action@main
               continue-on-error: true
