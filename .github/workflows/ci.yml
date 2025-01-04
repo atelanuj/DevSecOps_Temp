@@ -35,8 +35,8 @@ jobs:
             #   uses: SonarSource/sonarqube-scan-action@v4.2.1
             #   env:
             #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            #     SONAR_TOKEN: $SONAR_TOKEN
-            #     SONAR_HOST_URL: $SONAR_HOST_URL
+            #     SONAR_TOKEN: ${{env.SONAR_TOKEN}}
+            #     SONAR_HOST_URL: ${{env.SONAR_HOST_URL}}
 
             # - name: SonarQube Server Quality Gate check
             #   id: sonarqube-quality-gate-check
@@ -91,7 +91,7 @@ jobs:
 
             - name: Docker BUILD
               run: |
-                docker build --build-arg API_KEY=$TMDB_API_KEY -t netflix .
+                docker build --build-arg API_KEY=${{env.TMDB_API_KEY}} -t netflix .
 
             # - name: Run Trivy vulnerability scanner on Docker image
             #   uses: aquasecurity/trivy-action@0.28.0
