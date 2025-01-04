@@ -24,12 +24,26 @@ jobs:
                 java-package: 'jdk'
                 check-latest: true
 
-            # - name: SonarQube Static code analysis
-            #   uses: docker://sonarsource/sonar-scanner-cli:latest
+            # - name: SonarQube Scan
+            #   uses: SonarSource/sonarqube-scan-action@v4.2.1
             #   env:
             #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+            # - name: SonarQube Server Quality Gate check
+            #   id: sonarqube-quality-gate-check
+            #   uses: sonarsource/sonarqube-quality-gate-action@master
+            #   with:
+            #     pollingTimeoutSec: 600
+            #   env:
+            #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} #OPTIONAL
+
+
+            # - name: "Example show SonarQube Server Quality Gate Status value"
+            #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+        
 
             - name: OWASP Dependency check
               uses: dependency-check/Dependency-Check_Action@main
@@ -57,7 +71,7 @@ jobs:
               if: ${{ always() }}
               with:
                 name: OWASP-dependecy-report
-                path: .
+                path: './reports/dependency-check-report.html'
         
             - name: Run Trivy vulnerability scanner
               uses: aquasecurity/trivy-action@0.28.0
