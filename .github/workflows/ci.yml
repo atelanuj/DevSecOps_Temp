@@ -46,6 +46,12 @@ jobs:
                     --failOnCVSS 7
                     --enableRetired
 
+            - name: List dir
+              run: |
+                ls -lrt
+                echo "reports"
+                ls -lrt reports
+
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               if: ${{ always() }}
@@ -80,5 +86,5 @@ jobs:
             - name: Docker TAG & PUSH
               run: |
                 docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASS }}
-                docker tag netflix anujatel/netflix:${{github.run_id}}
-                docker push anujatel/netflix:${{github.run_id}}
+                docker tag netflix anujatel/netflix:${{github.run_number}}
+                docker push anujatel/netflix:${{github.run_number}}
