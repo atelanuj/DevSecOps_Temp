@@ -113,14 +113,14 @@ jobs:
                 docker tag netflix anujatel/netflix:${{github.run_number}}
                 docker push anujatel/netflix:${{github.run_number}}
               
-            - name: Deploy
+            - name: Update the deployment file
               run: | 
                 sed -i 's/anujatel\/netflix:.*/anujatel\/netflix:${{github.run_number}}/' Kubernetes/deployment.yml
                 git config --local user.email "github-actions[bot]@users.noreply.github.com"
                 git config --local user.name "github-actions[bot]"
                 git commit -a -m "Updated the Image tag to ${{github.run_number}}"
 
-            - name: Push changes
+            - name: Deploy to Kubernetes
               uses: ad-m/github-push-action@master
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
