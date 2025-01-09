@@ -16,6 +16,6 @@ selector:
     spec:
     containers:
     - name: netflix
-      image: anujatel/netflix:29
+      image: anujatel/netflix:30
       ports:
       - containerPort: 3000
